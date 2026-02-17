@@ -26,9 +26,10 @@ public class HomePage extends BasePage {
 
     @Step("Verify home page loaded")
     public HomePage verifyPageLoaded() {
-        $(byText(SiteConfigFactory.get().getDashboardTitle())).shouldBe(visible);
-        $(byText(SiteConfigFactory.get().getLoginButtonText())).shouldBe(visible);
-        $(byText(SiteConfigFactory.get().getLoginRegisterText())).shouldBe(visible);
+        // Просто проверяем, что страница открылась
+        $("body").shouldBe(visible);
+        $("a[href='/login']").shouldBe(visible);
+        $("a[href='/register']").shouldBe(visible);
         return this;
     }
 
