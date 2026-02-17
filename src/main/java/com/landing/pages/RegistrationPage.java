@@ -1,7 +1,7 @@
 package com.landing.pages;
 
 import com.codeborne.selenide.SelenideElement;
-import com.landing.utils.ConfigReader;
+import com.landing.config.SiteConfigFactory;
 import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Condition.*;
@@ -11,7 +11,6 @@ import static com.codeborne.selenide.Selenide.open;
 
 public class RegistrationPage extends BasePage {
 
-    // Локаторы
     private final SelenideElement firstNameInput = $("#firstName");
     private final SelenideElement lastNameInput = $("#lastName");
     private final SelenideElement emailInput = $("#email");
@@ -21,18 +20,12 @@ public class RegistrationPage extends BasePage {
     private final SelenideElement createButton = $("button[type='submit']");
     private final SelenideElement loginLink = $("a[href='/login']");
 
-    // Тексты из config
-    private final String createButtonText;
-    private final String loginLinkText;
-
     public RegistrationPage() {
-        this.createButtonText = ConfigReader.get("register.button.text");
-        this.loginLinkText = ConfigReader.get("register.login.text");
     }
 
     @Step("Open registration page")
     public RegistrationPage openPage() {
-        open(ConfigReader.getBaseUrl() + "/register");
+        open(SiteConfigFactory.get().getBaseUrl() + "/register");
         return this;
     }
 
@@ -47,8 +40,8 @@ public class RegistrationPage extends BasePage {
         verifyVisible(createButton);
         verifyVisible(loginLink);
 
-        createButton.shouldHave(text(createButtonText));
-        loginLink.shouldHave(text(loginLinkText));
+        createButton.shouldHave(text(SiteConfigFactory.get().getRegisterButtonText()));
+        loginLink.shouldHave(text(SiteConfigFactory.get().getRegisterLoginText()));
 
         return this;
     }
@@ -91,7 +84,6 @@ public class RegistrationPage extends BasePage {
 
     @Step("Select country: {country}")
     public RegistrationPage selectCountry(String country) {
-        // Клик по дропдауну страны
         $("form > div:nth-child(6) > button, [data-dropdown='country'] button").click();
         $(byText(country)).click();
         return this;
@@ -99,7 +91,6 @@ public class RegistrationPage extends BasePage {
 
     @Step("Select language: {language}")
     public RegistrationPage selectLanguage(String language) {
-        // Клик по дропдауну языка
         $("form > div:nth-child(7) > button, [data-dropdown='language'] button").click();
         $(byText(language)).click();
         return this;
@@ -125,8 +116,6 @@ public class RegistrationPage extends BasePage {
         click(loginLink);
         return this;
     }
-
-    // ==================== VERIFICATIONS ====================
 
     @Step("Verify error displayed")
     public RegistrationPage verifyErrorDisplayed() {

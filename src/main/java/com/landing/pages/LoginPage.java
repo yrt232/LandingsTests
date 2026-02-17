@@ -1,7 +1,7 @@
 package com.landing.pages;
 
 import com.codeborne.selenide.SelenideElement;
-import com.landing.utils.ConfigReader;
+import com.landing.config.SiteConfigFactory;
 import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Condition.*;
@@ -11,29 +11,18 @@ import static com.codeborne.selenide.Selenide.open;
 
 public class LoginPage extends BasePage {
 
-    // Локаторы (одинаковые для всех 6 сайтов)
     private final SelenideElement emailInput = $("#emailOrUsername");
     private final SelenideElement passwordInput = $("#password");
     private final SelenideElement loginButton = $("form button[type='submit']");
     private final SelenideElement registerLink = $("a[href='/register']");
     private final SelenideElement backToHomeLink = $("a[href='/']");
 
-    // Тексты из config (разные для каждого сайта/языка)
-    private final String loginButtonText;
-    private final String registerLinkText;
-    private final String backToHomeText;
-    private final String dashboardTitle;
-
     public LoginPage() {
-        this.loginButtonText = ConfigReader.get("login.button.text");
-        this.registerLinkText = ConfigReader.get("login.register.text");
-        this.backToHomeText = ConfigReader.get("login.back.text");
-        this.dashboardTitle = ConfigReader.get("dashboard.title");
     }
 
     @Step("Open login page")
     public LoginPage openPage() {
-        open(ConfigReader.getBaseUrl() + "/login");
+        open(SiteConfigFactory.get().getBaseUrl() + "/login");
         return this;
     }
 
@@ -45,9 +34,9 @@ public class LoginPage extends BasePage {
         verifyVisible(registerLink);
         verifyVisible(backToHomeLink);
 
-        loginButton.shouldHave(text(loginButtonText));
-        registerLink.shouldHave(text(registerLinkText));
-        backToHomeLink.shouldHave(text(backToHomeText));
+        loginButton.shouldHave(text(SiteConfigFactory.get().getLoginButtonText()));
+        registerLink.shouldHave(text(SiteConfigFactory.get().getLoginRegisterText()));
+        backToHomeLink.shouldHave(text(SiteConfigFactory.get().getLoginBackText()));
 
         return this;
     }
@@ -90,8 +79,6 @@ public class LoginPage extends BasePage {
         return this;
     }
 
-    // ==================== VERIFICATIONS ====================
-
     @Step("Verify error displayed")
     public LoginPage verifyErrorDisplayed() {
         $(".text-red-400, .error, .alert").shouldBe(visible);
@@ -108,7 +95,7 @@ public class LoginPage extends BasePage {
     public LoginPage verifySuccessfulLogin() {
         emailInput.shouldNotBe(visible);
         passwordInput.shouldNotBe(visible);
-        $(byText(dashboardTitle)).shouldBe(visible);
+        $(byText(SiteConfigFactory.get().getDashboardTitle())).shouldBe(visible);
         return this;
     }
 
@@ -121,7 +108,7 @@ public class LoginPage extends BasePage {
 
     @Step("Verify home page opened")
     public LoginPage verifyHomePageOpened() {
-        $(byText(dashboardTitle)).shouldBe(visible);
+        $(byText(SiteConfigFactory.get().getDashboardTitle())).shouldBe(visible);
         emailInput.shouldNotBe(visible);
         return this;
     }
